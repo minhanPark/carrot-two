@@ -118,3 +118,21 @@ tailwind는 클래스를 사용할 때마다 해당 클래스는 만들어줌(�
 <div className="bg-[url('/vercel.svg')]"></div>
 <h2 className="text-[1000px] text-[#000]">dddd</h2>
 ```
+
+### React-hook-form에서 에러처리
+
+```jsx
+const { handeSubmit } = useForm();
+// handleSubmit의 두번째 인수로 onInvalid를 전달하면 더 깔끔하게 에러처리 가능
+const onInvalid = (error: FieldErrors) => {
+  //error는 필드 중에 에러가 어디에 생겼는 지 알려줌
+  //각각의 에러메시지를 설정해서 프론트단에서 깔끔하게 에러를 처리할 수 있다.
+};
+```
+
+### 하나의 인풋에만 onChange모드를 사용하기?
+
+https://stackoverflow.com/questions/71724431/how-to-apply-mode-onchange-only-to-specific-input-element-in-useform-react-hook  
+이런 부분을 보면 많이들 도전하고는 있는 것 같은데 trigger속성과 useFormState를 활용해서 하고 있는 것 같다.  
+아니면 watch("email")이런식으로 이메일 부분만 watch하고 상황에 따라 트리거를 발생시켜야하나 ..?  
+정확한 답은 발견 못했음
