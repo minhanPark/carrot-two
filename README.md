@@ -136,3 +136,27 @@ https://stackoverflow.com/questions/71724431/how-to-apply-mode-onchange-only-to-
 이런 부분을 보면 많이들 도전하고는 있는 것 같은데 trigger속성과 useFormState를 활용해서 하고 있는 것 같다.  
 아니면 watch("email")이런식으로 이메일 부분만 watch하고 상황에 따라 트리거를 발생시켜야하나 ..?  
 정확한 답은 발견 못했음
+
+### api에서 받을 때 req.body와 req.body.email의 차이
+
+req.body는 req의 내용을 'content-type' 기준으로 파싱한다.  
+그러니 프론트에서 보낼 때 content-type을 지정하지 않으면 req.body에 값은 있어도, req.body.email처럼 바로 접근은 못하게 한다.  
+즉 content-type을 프론트에서 지정해주자
+
+```js
+fetch("/api/users/enter", {
+  method: "POST",
+  body: JSON.stringify(data),
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+```
+
+여기서 또 중요한건 **JSON.stringify**이다.
+
+> JSON.stringify는 Javascript 값이나 객체를 JSON 문자열로 변환  
+> JSON.parse는 JSON 문자열의 구문을 분석하고, 그 결과에서 Javascript 값이나 객체를 생성
+
+콘텐트 타입을 정했으니 JSON으로 변환해서 보내줘야함.  
+기본적으로 axios는 "Content-Type": "application/json"이 적용되어 있고, 경험상? 알아서 변환해서 보내준다.
