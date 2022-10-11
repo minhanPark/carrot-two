@@ -42,12 +42,12 @@ async function handler(req: NextApiRequest, res: NextApiResponse<Response>) {
   });
 
   if (phone) {
-    const message = await twilioClient.messages.create({
-      messagingServiceSid: process.env.TWILIO_SERVICE_ID,
-      to: process.env.TWILIO_PHONE!,
-      body: `Your login token is ${payload}`,
-    });
-    console.log(message);
+    // const message = await twilioClient.messages.create({
+    //   messagingServiceSid: process.env.TWILIO_SERVICE_ID,
+    //   to: process.env.TWILIO_PHONE!,
+    //   body: `Your login token is ${payload}`,
+    // });
+    // console.log(message);
   }
   res.json({
     ok: true,

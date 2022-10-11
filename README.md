@@ -160,3 +160,49 @@ fetch("/api/users/enter", {
 
 콘텐트 타입을 정했으니 JSON으로 변환해서 보내줘야함.  
 기본적으로 axios는 "Content-Type": "application/json"이 적용되어 있고, 경험상? 알아서 변환해서 보내준다.
+
+### 인증을 위해서 iron-session을 이용할 수 있음
+
+iron-session은 데이터를 저장하기 위해 서명되고 암호화된 쿠키를 사용하는 Node.js stateless session유틸리티이다.
+
+nextjs에서 모든 api에는 실제 백엔드 없이 개별적으로 동작한다. 그래서 각 페이지마다 type과 설정을 따로 해주어야함
+
+```ts
+declare module "iron-session" {
+  interface IronSessionData {
+    user?: {
+      id: number;
+    };
+  }
+}
+```
+
+가령 위와 같은 설정이다. 그래서 **wrapper를 설정해주면 더 편하게 사용가능**하다.
+
+```ts
+import { withIronSessionApiRoute } from "iron-session/next";
+
+declare module "iron-session" {
+  interface IronSessionData {
+    user?: {
+      id: number;
+    };
+  }
+}
+
+const cookieOptions = {
+  cookieName: "carrot-session",
+  password: process.env.SESSION_PASSWORD as string,
+};
+
+export function withApiSession(fn: any) {
+  return withIronSessionApiRoute(fn, cookieOptions);
+}
+```
+
+위와 같은 형태로 wrapper를 만들어가면됨
+
+### 인증을 이용하려면 next-auth많이 이용함
+
+근데 프리즈마에 합치려면 번거롭고 복붙할 부분이 많음.  
+iron-session에다가 sns 로그인만 붙이는 방법 찾으면 좋을듯
