@@ -206,3 +206,22 @@ export function withApiSession(fn: any) {
 
 근데 프리즈마에 합치려면 번거롭고 복붙할 부분이 많음.  
 iron-session에다가 sns 로그인만 붙이는 방법 찾으면 좋을듯
+
+### Prisma에서 모델의 타입을 만들어 준다.
+
+```js
+model Product {
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      Int
+  image       String
+  name        String
+  price       Int
+  description String   @db.VarChar(2000)
+}
+```
+
+만약 위와 같이 모델을 만들었다고 하자.  
+그러면 프리즈마는 활용할 수 있도록 타입도 만들어준다. 프론트에서는 그 타입을 쓰면 편함.
