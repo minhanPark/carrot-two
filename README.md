@@ -225,3 +225,33 @@ model Product {
 
 만약 위와 같이 모델을 만들었다고 하자.  
 그러면 프리즈마는 활용할 수 있도록 타입도 만들어준다. 프론트에서는 그 타입을 쓰면 편함.
+
+### 관계 맵핑 되어있는 데이터 불러오기
+
+```js
+const product = await client.product.findUnique({
+    where: {
+      id: +id!.toString(),
+    },
+    include: {
+      user: {
+        select: {
+          id: true,
+          name: true,
+          avatar: true,
+        },
+      },
+    },
+  });
+```
+
+위처럼 user를 불러오려면 **include**를 이용해서 user를 불러오겠다고 알려줘야한다.  
+user값을 다 갖고 오려면 user에 true를 전달하면 되고, 위처럼 selelct를 통해 불러오고 싶은 값만 지정해줘도 된다.
+
+```js
+where: {
+      id: +id!.toString(),
+    },
+```
+
+이 부분에서는 [id]가 string, string[], undefined가 될 수 있다고 타입스크립트가 알려줘서 위처럼 처리했다. 니콜라스 강의엔 undefined는 타입에 없었는데 추가되어 있었음. 그래서 ! 처리해줌
