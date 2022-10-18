@@ -255,3 +255,83 @@ where: {
 ```
 
 이 부분에서는 [id]가 string, string[], undefined가 될 수 있다고 타입스크립트가 알려줘서 위처럼 처리했다. 니콜라스 강의엔 undefined는 타입에 없었는데 추가되어 있었음. 그래서 ! 처리해줌
+
+### mutate
+
+mutate에는 두가지가 있음.  
+바운드된 것과 되지 않은것.  
+기본적으로 useMutation으로 빼낸 것에는 바인드가 되어있어서 키를 넣을 필요가 없다.
+
+```js
+mutate(바꿀 데이터, 옵션(재검증을 할 지 안 할지 불린))
+```
+
+만약 mutate를 사용했을 때는 Optimistic UI Update를 하기 위한 것일 것이다. 그러나 옵션에 true를 주면 비동기 통신들이 먼저 도착하게 되는 것이 무엇인 지 모르므로 업데이트가 안될 수도 있다.
+
+```js
+const onFavClick = () => {
+  toggleFav({});
+  if (!data) return;
+  mutate({ ...data, isLiked: !data.isLiked }, false);
+};
+```
+
+즉 위처럼 toggleFav를 보내고, mutate에서는 false를 옵션으로 줘야 정상 작동(mutate와 toggleFav의 순서는 상관없다.)
+
+unbound된 것은 SWRConfig에서 갖고온다.
+
+```js
+const { mutate } = useSWRConfig();
+mutate(키, 데이터, 옵션);
+```
+
+해당 mutation은 키가 필요함.  
+기존에 mutate는 data를 불러올 수 있었지만 unbound의 경우 데이터를 못불러올 수도 있음. 그래서 데이터에 함수 형태로 데이터를 넣을 수 있다.
+
+```ts
+boundMutation((prev) => prev && { ...prev, isLiked: !prev.isLiked }, false);
+mutate("api/users/me", (prev: any) => ({ ok: !prev.ok }), false);
+```
+
+> 만야겡 캐시데이터를 변경하고 싶은게 아니라 다시 한번 요청해서 불러오고 싶다면 키 값을 제외하고 모두 지워주면 된다. 그러면 refetch하게 된다.
+
+옵션 값은 불린이 될 수도 있지만 객체가 될수도 있음.
+
+- optimisticData: 클라이언트 캐시를 즉시 업데이트하기 위한 데이터. 일반적으로 낙관적인 UI에서 사용됩니다.
+- revalidate: 비동기 업데이트가 해소되면 캐시를 갱신합니다.
+- populateCache: should the result of the remote mutation be written to the cache, or a function that receives new result and current result as arguments and returns the mutation result.
+- rollbackOnError: 원격 뮤테이션 에러 시 캐시를 롤백합니다.
+
+### 관계있는 모델 갯수 세기
+
+```js
+const products = await client.product.findMany({
+  include: {
+    _count: {
+      select: {
+        favs: true,
+      },
+    },
+  },
+});
+```
+
+이런식으로 include에는 \_count 속성이 있어서 여기에 favs라던지 선택을 해주면 된다.
+
+```json
+{
+id: 1,
+createdAt: "2022-10-14T04:22:51.296Z",
+updatedAt: "2022-10-14T04:22:51.296Z",
+userId: 1,
+image: "xx",
+name: "박민한",
+price: 12,
+description: "팝니다 싸게",
+_count: {
+favs: 1
+}
+},
+```
+
+그러면 위와 같이 \_count가 포함되서 오게 된다.
