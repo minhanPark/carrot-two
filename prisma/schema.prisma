@@ -8,16 +8,19 @@ datasource db {
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
-  phone     String?   @unique
-  email     String?   @unique
-  name      String
-  avatar    String?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  tokens    Token[]
-  products  Product[]
-  favs      Fav[]
+  id         Int         @id @default(autoincrement())
+  phone      String?     @unique
+  email      String?     @unique
+  name       String
+  avatar     String?
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  tokens     Token[]
+  products   Product[]
+  favs       Fav[]
+  posts      Post[]
+  answers    Answer[]
+  wonderings Wondering[]
 }
 
 model Token {
@@ -50,4 +53,36 @@ model Fav {
   userId    Int
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId Int
+}
+
+model Post {
+  id         Int         @id @default(autoincrement())
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  question   String      @db.VarChar(2000)
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     Int
+  answers    Answer[]
+  wonderings Wondering[]
+}
+
+model Answer {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  answer    String   @db.VarChar(2000)
+}
+
+model Wondering {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId    Int
 }
