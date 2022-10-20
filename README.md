@@ -335,3 +335,29 @@ favs: 1
 ```
 
 그러면 위와 같이 \_count가 포함되서 오게 된다.
+
+### useEffect로 만든 훅에선 기본값으로 실행된다.
+
+만약 훅을 만들었을 때 기본값을 null로 하고 useSwr로 요청을 했다면 기본값이 null이 드가서 에러가 뜰 수도 있다.  
+이럴 떈 선택적으로 보내도록 값을 체크하고, 요청하거나 null로 처리하면 된다.
+
+### prisma에서 중복된 관계 설정
+
+```prisma
+model Review {
+  createdBy    User     @relation(name: "writtenReviews", fields: [createdById], references: [id])
+  createdById  Int
+  createdFor   User     @relation(name: "receivedReviews", fields: [createdForId], references: [id])
+  createdForId Int
+}
+```
+
+위에 review처럼 리뷰를 쓴 사람과 리뷰를 받는 사람이 둘다 유저 타입인 경우에 프리즈마는 애매한 설정이 되었다고 경고를 띄운다. 이때는 relation에 이름을 써주고 아래처럼 이름을 user에 넣어주면 된다.
+
+```prisma
+model User {
+  writtenReviews  Review[]    @relation(name: "writtenReviews")
+  receivedReviews Review[]    @relation(name: "receivedReviews")
+```
+
+이렇게 하면 유저에 대한 구분이 되면서 넣어짐.

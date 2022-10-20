@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import Button from "../../components/button";
 import Layout from "../../components/layout";
 import TextArea from "../../components/textarea";
+import useCoords from "../../libs/client/useCoords";
 import useMutation from "../../libs/client/useMutation";
 
 interface WriteForm {
