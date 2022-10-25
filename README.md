@@ -361,3 +361,33 @@ model User {
 ```
 
 이렇게 하면 유저에 대한 구분이 되면서 넣어짐.
+
+### 데이터베이스가 이미 존재하는 모델의 schema를 변경하고자 할 땐 세가지 방법이 있음
+
+- 기존 데이터 베이스를 지운 후 생성
+- 새로 추가되는 필드를 옵셔널하게 생성
+- default value를 입력하여 기존 데이터에도 추가되도록 설정
+
+### prisma에 enum타입은 문자열도 들어간다.
+
+```prisma
+model Record {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    Int
+  productId Int
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  kind      Kind
+}
+
+enum Kind {
+  Purchase
+  Sale
+  Fav
+}
+```
+
+위처럼 kind에 Kind enum 타입을 전달해줌.  
+해당 값이 어떻게 나눠지지 했는데, 문자열로 들어가는 것을 확인함
