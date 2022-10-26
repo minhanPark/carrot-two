@@ -391,3 +391,65 @@ enum Kind {
 
 위처럼 kind에 Kind enum 타입을 전달해줌.  
 해당 값이 어떻게 나눠지지 했는데, 문자열로 들어가는 것을 확인함
+
+### form의 전체 에러 보여주기
+
+각 필드마다 에러를 설정할 수 있지만 전체 상태값을 보고 전체 에러를 줄 수도 있다.
+
+```ts
+interface EditProfileForm {
+  email?: string;
+  phone?: string;
+  formErrors?: string;
+}
+```
+
+이런식으로 formErrors라는 값을 전달해주고, userForm의 타입으로 전달해준다.
+
+```ts
+const {
+  register,
+  setValue,
+  handleSubmit,
+  setError,
+  formState: { errors },
+} = useForm<EditProfileForm>();
+
+const onValid = ({ email, phone }: EditProfileForm) => {
+  if (email === "" && phone === "") {
+    setError("formErrors", {
+      message: "Email이나 Phone 중에서 하나가 필요합니다.",
+    });
+  }
+};
+```
+
+setError를 통해서 formErrors라는 상태값에 메시지를 전달해주면 된다.  
+또 formState에서 errors에 에러가 담기는데 여기서 메시지가 있다면 보여주면 된다.
+
+```js
+{
+  errors.formErrors ? (
+    <span className="my-2 text-red-500 font-medium text-center block">
+      {errors.formErrors.message}
+    </span>
+  ) : null;
+}
+```
+
+### react-hook-form에서 값의 타입 바꾸기
+
+```js
+<Input
+  required
+  label="Price"
+  name="price"
+  type="text"
+  kind="price"
+  register={register("price", { required: true, valueAsNumber: true })}
+/>
+```
+
+위에처럼 valueAsNumber을 전달하면 문자값이 숫자로 바뀌어서 백엔드에 전달된다.  
+입력한 input을 숫자로 반환하고, 문제가 발생하면 NaN이 반환된다, 유효성 검사후 프로세스가 실행됨.  
+비슷한 것으로 valueAsDate가 있는데 이것은 입력한 input을 날짜로 반환하고, 문제가 발생하면 null이 반환된다.
