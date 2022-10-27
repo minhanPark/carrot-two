@@ -453,3 +453,13 @@ setError를 통해서 formErrors라는 상태값에 메시지를 전달해주면
 위에처럼 valueAsNumber을 전달하면 문자값이 숫자로 바뀌어서 백엔드에 전달된다.  
 입력한 input을 숫자로 반환하고, 문제가 발생하면 NaN이 반환된다, 유효성 검사후 프로세스가 실행됨.  
 비슷한 것으로 valueAsDate가 있는데 이것은 입력한 input을 날짜로 반환하고, 문제가 발생하면 null이 반환된다.
+
+### npx prisma 명령어 추가
+
+```json
+"prisma": {
+    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
+  }
+```
+
+이런식으로 package.json에 prisma를 적어놓으면 npx prisma seed 처럼 명령어 입력이 가능하다.
