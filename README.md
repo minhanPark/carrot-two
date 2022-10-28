@@ -463,3 +463,30 @@ setError를 통해서 formErrors라는 상태값에 메시지를 전달해주면
 ```
 
 이런식으로 package.json에 prisma를 적어놓으면 npx prisma seed 처럼 명령어 입력이 가능하다.
+
+### 페이지네이션 추가
+
+모든 것에 페이지네이션을 추가해줘야 한다.
+
+```js
+const [page, setPage] = useState(1);
+const { data } = useSWR(`/api/streams?page=${page}`);
+```
+
+프론트 측에서는 위 처럼 page를 state해두고 swr에 같이 전달할 수 있다.
+기본값을 1로 하자.
+useSWR의 키를 배열로 처리하면 더 깔끔하다.
+
+```js
+const {
+  query: { page },
+} = req;
+
+const streams = await client.stream.findMany({
+  take: 10,
+  skip: (Number(page) - 1) * 10,
+});
+```
+
+백엔드에서는 받은 page에서 1을 빼서 스킵을 해준다. 그러면 페이지네이션이 된다.  
+select안에도 take와 skip이 가능하니 거기도 페이징이 필요하면 해야한다.

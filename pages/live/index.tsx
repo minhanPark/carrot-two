@@ -4,6 +4,7 @@ import FloatingButton from "../../components/floating-button";
 import Layout from "../../components/layout";
 import { Stream } from "@prisma/client";
 import useSWR from "swr";
+import { useState } from "react";
 
 interface StreamResponse {
   ok: boolean;
@@ -11,6 +12,7 @@ interface StreamResponse {
 }
 
 const Live: NextPage = () => {
+  const [page, setPage] = useState(1);
   const { data } = useSWR<StreamResponse>("/api/streams");
   return (
     <Layout hasTabBar title="라이브">
