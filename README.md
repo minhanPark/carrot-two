@@ -490,3 +490,85 @@ const streams = await client.stream.findMany({
 
 백엔드에서는 받은 page에서 1을 빼서 스킵을 해준다. 그러면 페이지네이션이 된다.  
 select안에도 take와 skip이 가능하니 거기도 페이징이 필요하면 해야한다.
+
+### next/image 사용하기
+
+next/image를 사용하면 일단 두가지 장점이 있다.
+
+- 레이지 로딩을 자동으로 처리해준다.
+- 이미지를 불러오는 동안 자동으로 블러된 형태로 보여준다(로컬에 있는 이미지에서만 가능)
+
+```js
+import Image from "next/image";
+import profilePic from "../public/me.png";
+
+function Home() {
+  return (
+    <>
+      <h1>My Homepage</h1>
+      <Image
+        src={profilePic}
+        alt="Picture of the author"
+        // width={500} automatically provided
+        // height={500} automatically provided
+        // blurDataURL="data:..." automatically provided
+        // placeholder="blur" // Optional blur-up while loading
+        quality={1~100}
+      />
+      <p>Welcome to my homepage!</p>
+    </>
+  );
+}
+```
+
+기본적으로 로컬 이미지는 위와 같이 전달할 수 있음. 기본적으로 크기를 계산할 것이고, 레이지 로딩을 처리해줌.  
+placeholder 속성을 주면 로딩하는 동안 블러된 이미지를 보여주다가 바뀜.  
+quality의 값으로 숫자를 줘서 이미지의 품질을 조절할 수도 있음
+
+리모트 이미지들은 빌드 과정에서 Next.js가 파일에 접근할 수 없어서 src에 상대적이든 절대적이든 url을 적어야 한다.  
+그리고 width, height를 제공해주어야 한다.
+
+```js
+export default function Home() {
+  return (
+    <>
+      <h1>My Homepage</h1>
+      <Image
+        src="/me.png"
+        alt="Picture of the author"
+        width={500}
+        height={500}
+      />
+      <p>Welcome to my homepage!</p>
+    </>
+  );
+}
+```
+
+리모트 이미지를 최적화할 때 next/image를 사용하려면 아래처럼 next.config.js를 수정해야한다.
+
+```js
+/** @type {import('next').NextConfig} */
+module.exports = {
+  reactStrictMode: true,
+  images: {
+    domains: ["imagedelivery.net"],
+  },
+};
+```
+
+만약 리모트 이미지의 width와 heigh를 모른다면 layout의 fill을 넣어주면 된다. 또한 class에 object-cover 등을 추가해주면 됨.
+
+```js
+<div className="relative">
+  <Image
+    src="/me.png"
+    alt="Picture of the author"
+    className="object-cover"
+    layout="fill"
+  />
+</div>
+```
+
+이미지는 div의 기준으로 배치될 거고, fill과 object-cover로 인해서 자동으로 채워짐  
+리모트 이미지에서 블러된 이미지를 보여주려면 placeholder="blur"값과 함께 blurDataURL="url"도 함께 제공해주어야 한다.
