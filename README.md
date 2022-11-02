@@ -572,3 +572,7 @@ module.exports = {
 
 이미지는 div의 기준으로 배치될 거고, fill과 object-cover로 인해서 자동으로 채워짐  
 리모트 이미지에서 블러된 이미지를 보여주려면 placeholder="blur"값과 함께 blurDataURL="url"도 함께 제공해주어야 한다.
+
+### 서버 컴포넌트
+
+클라이언트 쪽에서 자바스크립트를 전혀 사용하지 않아도 만들 수 있다.
